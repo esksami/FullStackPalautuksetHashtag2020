@@ -11,19 +11,27 @@ import loginService from './services/login'
 import storage from './utils/storage'
 
 import { notify } from './reducers/notificationReducer'
-import { createBlog, initializeBlogs, likeBlog, removeBlog } from './reducers/blogReducer'
+import { createBlog,
+         initializeBlogs,
+         likeBlog,
+         removeBlog } from './reducers/blogReducer'
+import { loginUser, logoutUser, loadUser } from './reducers/userReducer'
 
 
 const App = () => {
   const dispatch = useDispatch()
   const notification = useSelector(state => state.notification)
   const blogs = useSelector(state => state.blogs)
+  const user = useSelector(state => state.user)
+
+  console.log('user', user)
 
 /*  console.log('blogs:', blogs)
 */
 /*  const [oldBlogs, setBlogs] = useState([])
 */
-  const [user, setUser] = useState(null)
+/*  const [oldUser, setUser] = useState(null)
+*/  
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
 
@@ -37,8 +45,9 @@ const App = () => {
   }, [dispatch])
 
   useEffect(() => {
-    const user = storage.loadUser()
-    setUser(user)
+    /*const user =*/ 
+/*    setUser(storage.loadUser()) */
+    dispatch(loadUser())
   }, [])
 
   const notifyWith = (message, type='success') => {
@@ -49,17 +58,19 @@ const App = () => {
     event.preventDefault()
 
     try {
-      const user = await loginService.login({
+      const cantAccessUserVariableFromHereHmmm = await dispatch(loginUser(username, password))
+/*      const user = await loginService.login({
         username, password
-      })
+      })*/
+      const frickingfrick = cantAccessUserVariableFromHereHmmm
 
-      console.log(user)
+      console.log('user at login always null', user)
 
       setUsername('')
       setPassword('')
-      setUser(user)
-      notifyWith(`${user.name} welcome back!`)
-      storage.saveUser(user)
+/*      setUser(user)
+*/    
+      notifyWith(`${frickingfrick.name} welcome back!`)
     } catch(exception) {
       notifyWith('wrong username/password', 'error')
     }
@@ -100,8 +111,9 @@ const App = () => {
   }
 
   const handleLogout = () => {
-    setUser(null)
-    storage.logoutUser()
+    dispatch(logoutUser())
+/*    setUser(null)
+    storage.logoutUser()*/
   }
 
   if ( !user ) {
