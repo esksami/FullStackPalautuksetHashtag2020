@@ -1,58 +1,25 @@
-import loginService from '../services/login'
-import storage from '../utils/storage'
+import userService from '../services/users'
 
 
 const reducer = (store = [], action) => {
   switch(action.type) {
-    case 'SET':
-      return action.user
-    case 'LOGOUT':
-      return null
+    case 'INIT':
+      return action.data
     default:
       return store
   }
 }
 
-export const loginUser = (username, password) => {
+export const initializeUsers = () => {
   return async dispatch => {
-    const user = await loginService.login({
-      username, password
-    })
-
-    storage.saveUser(user)
+    const data = await userService.getAll()
+    console.log('users.data:', data)
 
     dispatch({
-      type: 'SET',
-      user
-    })
-
-    return user
-  }
-}
-
-
-export const loadUser = () => {
-  return async dispatch => {
-    const user = storage.loadUser()
-
-    dispatch({
-      type: 'SET',
-      user
-    })
-
-    return user
-  }
-}
-
-export const logoutUser = () => {
-  return async dispatch => {
-    storage.logoutUser()
-
-    dispatch({
-      type: 'LOGOUT'
+      type: 'INIT',
+      data
     })
   }
 }
-
 
 export default reducer
