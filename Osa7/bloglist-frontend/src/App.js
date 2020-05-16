@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import {
   BrowserRouter as Router,
   Switch, Route, Link, Redirect,
-  useHistory
+  useHistory, useRouteMatch, useParams
 } from 'react-router-dom'
 
 import Blog from './components/Blog'
@@ -151,19 +151,43 @@ const Users = () => {
     <div>
       <h2>Users</h2>
       <table>
-        <tr>
-          <th>Name</th>
-          <th>blogs created</th>
-        </tr>
-      {users.map(user => {
-        return (
+        <thead>
           <tr>
-            <td>{user.username}</td>
-            <td>{user.blogs.length}</td>
+            <th>Name</th>
+            <th>blogs created</th>
           </tr>
+        </thead>
+        <tbody>
+        {users.map(user => {
+          return (
+            <tr key={user.id}>
+              <td><Link to={`/users/${user.id}`}>{user.username}</Link></td>
+              <td>{user.blogs.length}</td>
+            </tr>
+          )}
         )}
-      )}
+        </tbody>
       </table>
+    </div>
+  )
+}
+
+
+const User = () => {
+  const id = useParams().id
+  const users = useSelector(state => state.users)
+
+  const user = users.find(user => user.id === id)
+
+  return (
+    <div>
+      <h2>{user.username}</h2>
+
+      <h3>Added blogs</h3>
+
+      <ul>
+        {user.blogs.map(blog => <li key={blog.id}>{blog.title}</li>)}
+      </ul>
     </div>
   )
 }
@@ -188,6 +212,9 @@ const App = () => {
         {user.username} logged in <button onClick={handleLogout}>logout</button>
       </p>}
       <Switch>
+        <Route path="/users/:id">
+          <User/>
+        </Route>
         <Route path='/login'>
           <LogIn/>
         </Route>
