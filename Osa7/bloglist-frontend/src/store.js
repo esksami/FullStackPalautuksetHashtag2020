@@ -7,11 +7,16 @@ import loginReducer from './reducers/loginReducer'
 import userReducer from './reducers/userReducer'
 
 
+function lastAction(state = null, action) {
+  return action;
+}
+
 const reducer = combineReducers({
   notification: notificationReducer,
   blogs: blogReducer,
   user: loginReducer,
-  users: userReducer
+  users: userReducer,
+  lastAction
 })
 
 export default createStore(reducer, composeWithDevTools(

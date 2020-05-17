@@ -3,13 +3,13 @@ import blogService from '../services/blogs'
 
 const reducer = (store = [], action) => {
   switch(action.type) {
-    case 'CREATE':
+    case 'CREATE_BLOG':
       return [...store, action.data]
-    case 'REMOVE':
+    case 'REMOVE_BLOG':
       return store.filter(b => b.id !== action.data.id)
-    case 'LIKE':
+    case 'LIKE_BLOG':
       return store.map(b => b.id === action.data.id ? action.data : b)
-    case 'INIT':
+    case 'INIT_BLOGS':
       return action.data
     default:
       return store
@@ -21,7 +21,7 @@ export const createBlog = (blog) => {
     const data = await blogService.create(blog)
 
     dispatch({
-      type: 'CREATE',
+      type: 'CREATE_BLOG',
       data
     })
   }
@@ -32,7 +32,7 @@ export const removeBlog = (blog) => {
     const data = await blogService.remove(blog.id)
 
     dispatch({
-      type: 'REMOVE',
+      type: 'REMOVE_BLOG',
       data: blog
     })
   }
@@ -48,7 +48,7 @@ export const likeBlog = (blog) => {
     })
 
     dispatch({
-      type: 'LIKE',
+      type: 'LIKE_BLOG',
       data
     })
   }
@@ -61,7 +61,7 @@ export const initializeBlogs = () => {
     console.log('data[0]:', data[0])
 
     dispatch({
-      type: 'INIT',
+      type: 'INIT_BLOGS',
       data
     })
   }

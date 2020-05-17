@@ -7,6 +7,7 @@ router.get('/', async (request, response) => {
     .find({})
     .populate('blogs', { title: 1, url: 1,  likes: 1, author: 1 })
 
+  console.log('backend returning users:', users)
   response.json(users.map(u => u.toJSON()))
 })
 

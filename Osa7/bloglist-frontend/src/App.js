@@ -7,7 +7,7 @@ import {
   useHistory, useRouteMatch, useParams
 } from 'react-router-dom'
 
-import Blog from './components/Blog'
+import ReduxBlog from './components/ReduxBlog'
 import Notification from './components/Notification'
 import Togglable from './components/Togglable'
 import NewBlog from './components/NewBlog'
@@ -37,20 +37,6 @@ const Blogs = () => {
 
   const byLikes = (b1, b2) => b2.likes - b1.likes
 
-  const handleRemove = async (id) => {
-    const blogToRemove = blogs.find(b => b.id === id)
-    const ok = window.confirm(`Remove blog ${blogToRemove.title} by ${blogToRemove.author}`)
-    
-    if (ok) {
-      dispatch(removeBlog(blogToRemove))
-    }
-  }
-
-  const handleLike = async (id) => {
-    const blogToLike = blogs.find(b => b.id === id)
-    dispatch(likeBlog(blogToLike))
-  }
-
   const createNewBlog = (blog) => {
     try {
       dispatch(createBlog(blog))
@@ -70,16 +56,15 @@ const Blogs = () => {
       <Togglable buttonLabel='create new blog'  ref={blogFormRef}>
         <NewBlog createBlog={createNewBlog} />
       </Togglable>
-
-      {blogs.sort(byLikes).map(blog => {
-        return (<Blog
-          key={blog.id}
-          blog={blog}
-          handleLike={handleLike}
-          handleRemove={handleRemove}
-          own={user.username===(blog.user && blog.user.username)}
-        />)}
-      )}
+      <ul>
+        {blogs.sort(byLikes).map(blog => {
+          return (
+            <li key={blog.id}>
+              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
+            </li>
+          )}
+        )}
+      </ul>
     </div>)
 }
 
@@ -194,6 +179,7 @@ const User = () => {
 
 const App = () => {
   const dispatch = useDispatch()
+  const history = useHistory()
   const notification = useSelector(state => state.notification)
   const user = useSelector(state => state.user)
 
@@ -203,17 +189,30 @@ const App = () => {
 
   const handleLogout = () => {
     dispatch(logoutUser())
+
+    history.push('/login')
+  }
+
+  const padding = {
+    padding: 5
   }
 
   return (
     <div>
       <Notification notification={notification} />
+      <div>
+        <Link style={padding} to="/">blogs</Link>
+        <Link style={padding} to="/users">users</Link>
+      </div>
       {user && <p>
         {user.username} logged in <button onClick={handleLogout}>logout</button>
       </p>}
       <Switch>
         <Route path="/users/:id">
           <User/>
+        </Route>
+        <Route path="/blogs/:id">
+          <ReduxBlog/>
         </Route>
         <Route path='/login'>
           <LogIn/>
