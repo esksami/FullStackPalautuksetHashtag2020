@@ -5,6 +5,7 @@ import notificationReducer from './reducers/notificationReducer'
 import blogReducer from './reducers/blogReducer'
 import loginReducer from './reducers/loginReducer'
 import userReducer from './reducers/userReducer'
+import commentReducer from './reducers/commentReducer'
 
 
 function lastAction(state = null, action) {
@@ -16,6 +17,7 @@ const reducer = combineReducers({
   blogs: blogReducer,
   user: loginReducer,
   users: userReducer,
+  comments: commentReducer,
   lastAction
 })
 

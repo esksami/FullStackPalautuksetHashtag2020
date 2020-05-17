@@ -43,7 +43,9 @@ const Blogs = () => {
 
       blogFormRef.current.toggleVisibility()
 
-      dispatch(notify(`a new blog '${blog.title}' by ${blog.author} added!`, 'success', 4))
+      dispatch(notify(
+        `a new blog '${blog.title}' by ${blog.author} added!`, 'success', 4
+      ))
     } catch(exception) {
       console.log(exception)
     }
@@ -80,7 +82,9 @@ const LogIn = () => {
     event.preventDefault()
 
     try {
-      const cantAccessUserVariableFromHereHmmm = await dispatch(loginUser(username, password))
+      const cantAccessUserVariableFromHereHmmm = await dispatch(
+        loginUser(username, password)
+      )
 
       const frickingfrick = cantAccessUserVariableFromHereHmmm
 

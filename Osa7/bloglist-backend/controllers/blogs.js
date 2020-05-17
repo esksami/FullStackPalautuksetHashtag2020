@@ -2,6 +2,7 @@ const router = require('express').Router()
 const jwt = require('jsonwebtoken')
 const Blog = require('../models/blog')
 const User = require('../models/user')
+const Comment = require('../models/comment')
 
 router.get('/', async (request, response) => {
   const blogs = await Blog
@@ -20,7 +21,9 @@ router.delete('/:id', async (request, response) => {
   const user = await User.findById(decodedToken.id)
   const blog = await Blog.findById(request.params.id)
   if (blog.user.toString() !== user.id.toString()) {
-    return response.status(401).json({ error: 'only the creator can delete blogs' })
+    return response
+      .status(401)
+      .json({ error: 'only the creator can delete blogs' })
   }
 
   await blog.remove()
@@ -64,6 +67,25 @@ router.post('/', async (request, response) => {
   await user.save()
 
   response.status(201).json(savedBlog)
+})
+
+router.post('/:id/comments', async (request, response) => {
+  const comment = new Comment(request.body)
+  const blog = await Blog.findById(request.params.id)
+
+  comment.blog = blog
+  const savedComment = await comment.save()
+
+  response.status(201).json(savedComment)
+})
+
+
+router.get('/:id/comments', async (request, response) => {
+  const blog = await Blog.findById(request.params.id)
+
+  const comments = await Comment.find({ 'blog': blog.id })
+
+  response.json(comments)
 })
 
 module.exports = router
