@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
+import { List, ListItem, Wrapper, Title, SecondHeader, Button } from '../styles'
+
 import { useParams, useHistory } from 'react-router-dom'
 
 import NewComment from './NewComment'
@@ -28,14 +30,6 @@ const ReduxBlog = () => {
 
   const blog = blogs.find(blog => blog.id === id)
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5
-  }
-
   useEffect(() => {
     dispatch(initializeComments(blog))
   }, [dispatch])
@@ -57,34 +51,38 @@ const ReduxBlog = () => {
   }
 
   return (
-    <div style={blogStyle} className='blog'>
+    <Wrapper>
+      <Wrapper>
+        <Title>
+          <b>{blog.title}</b> <i style={{fontWeight: 'normal'}}>by {blog.author}</i>
+        </Title>
+      </Wrapper>
       <div>
-        <i>{blog.title}</i> by {blog.author}
-      </div>
-      <div>
-        <div>{blog.url}</div>
-        <div>likes {blog.likes}
-          <button onClick={() => handleLike(blog.id)}>like</button>
+        <div>url: {blog.url}</div>
+        <div>added by {blog.user.username}</div>
+        <div>{blog.likes} likes</div>
+        <div>
+          <Button onClick={() => handleLike(blog.id)}>like</Button>
+          {user.username === blog.user.username &&
+            <Button onClick={() => handleRemove(blog.id)}>remove</Button>}
         </div>
-        <div>{blog.user.name}</div>
-        {user.username === blog.user.username &&<button onClick={() => handleRemove(blog.id)}>remove</button>}
       </div>
       <div>
         <NewComment blog={blog}/>
       </div>
       <div>
-        <h3>Comments</h3>
-        <ul>
+        <SecondHeader>Comments</SecondHeader>
+        <List>
           {comments.map(comment => {
             return (
-              <li key={comment.id}>
+              <ListItem key={comment.id}>
                 {comment.content}
-              </li>
+              </ListItem>
             )}
           )}
-        </ul>
+        </List>
       </div>
-    </div>
+    </Wrapper>
   )
 }
 

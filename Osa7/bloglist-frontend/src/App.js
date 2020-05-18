@@ -3,9 +3,14 @@ import { useSelector, useDispatch } from 'react-redux'
 
 import {
   BrowserRouter as Router,
-  Switch, Route, Link, Redirect,
+  Switch, Route, Link, NavLink, Redirect,
   useHistory, useRouteMatch, useParams
 } from 'react-router-dom'
+
+import {
+  Form, Input, List, ListItem, Title, SecondHeader, ThirdHeader, 
+  Wrapper, Navigation, NavItem, Button, StyledLink
+} from './styles'
 
 import ReduxBlog from './components/ReduxBlog'
 import Notification from './components/Notification'
@@ -53,20 +58,22 @@ const Blogs = () => {
 
   return (
     <div>
-      <h2>blogs</h2>
+        <Title>
+          Blogs
+        </Title>
 
       <Togglable buttonLabel='create new blog'  ref={blogFormRef}>
         <NewBlog createBlog={createNewBlog} />
       </Togglable>
-      <ul>
+      <List>
         {blogs.sort(byLikes).map(blog => {
           return (
-            <li key={blog.id}>
-              <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
-            </li>
+            <ListItem key={blog.id}>
+              <StyledLink to={`/blogs/${blog.id}`}>{blog.title}</StyledLink>
+            </ListItem>
           )}
         )}
-      </ul>
+      </List>
     </div>)
 }
 
@@ -103,27 +110,27 @@ const LogIn = () => {
 
   return (
     <div>
-      <h2>login to application</h2>
+      <Title>Login</Title>
 
-      <form onSubmit={handleLogin}>
+      <Form onSubmit={handleLogin}>
         <div>
-          username
-          <input
+          <label for="username">Username</label>
+          <Input
             id='username'
             value={username}
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
         <div>
-          password
-          <input
+          <label for="username">Password</label>
+          <Input
             id='password'
             value={password}
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
-        <button id='login'>login</button>
-      </form>
+        <Button id='login'>login</Button>
+      </Form>
     </div>
   )
 }
@@ -138,7 +145,7 @@ const Users = () => {
 
   return (
     <div>
-      <h2>Users</h2>
+      <Title>Users</Title>
       <table>
         <thead>
           <tr>
@@ -170,13 +177,19 @@ const User = () => {
 
   return (
     <div>
-      <h2>{user.username}</h2>
+      <Title>{user.username}</Title>
 
-      <h3>Added blogs</h3>
+      <ThirdHeader>Added blogs</ThirdHeader>
 
-      <ul>
-        {user.blogs.map(blog => <li key={blog.id}>{blog.title}</li>)}
-      </ul>
+      <List>
+        {user.blogs.map(blog => {
+          return (
+            <ListItem key={blog.id}>
+              <StyledLink to={`/blogs/${blog.id}`}>{blog.title}</StyledLink>
+            </ListItem>
+          )}
+        )}
+      </List>
     </div>
   )
 }
@@ -204,13 +217,15 @@ const App = () => {
   return (
     <div>
       <Notification notification={notification} />
-      <div>
-        <Link style={padding} to="/">blogs</Link>
-        <Link style={padding} to="/users">users</Link>
-      </div>
-      {user && <p>
-        {user.username} logged in <button onClick={handleLogout}>logout</button>
-      </p>}
+      <Navigation>
+        <NavItem to="/blogs">Blogs</NavItem>
+        <NavItem to="/users">Users</NavItem>
+      </Navigation>
+      {user &&
+        <div style={{float: 'right'}}>
+          <span>Logged in as <b>{user.username}</b></span>
+          <Button onClick={handleLogout}>Logout</Button>
+        </div>}
       <Switch>
         <Route path="/users/:id">
           <User/>
@@ -224,8 +239,11 @@ const App = () => {
         <Route path='/users'>
           <Users/>
         </Route>
-        <Route path='/'>
+        <Route path='/blogs'>
           {user ? <Blogs/> : <Redirect to='/login'/>}
+        </Route>
+        <Route path='/'>
+          <Redirect to='/blogs'/>
         </Route>
       </Switch>
     </div>

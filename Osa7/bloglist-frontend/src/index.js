@@ -6,10 +6,13 @@ import { BrowserRouter as Router } from 'react-router-dom'
 import App from './App'
 import store from './store'
 
+import { GlobalStyle } from './styles';
+
 
 ReactDOM.render(
   <Router>
     <Provider store={store}>
+      <GlobalStyle/>
       <App />
     </Provider>
   </Router>,

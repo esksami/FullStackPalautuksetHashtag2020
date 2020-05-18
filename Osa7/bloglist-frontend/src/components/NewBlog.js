@@ -1,5 +1,8 @@
 import React, { useState } from 'react'
 
+import { Form, Input, Title, Wrapper, Navigation, NavItem, Button } from '../styles'
+
+
 const NewBlog = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
@@ -19,11 +22,11 @@ const NewBlog = (props) => {
 
   return (
     <div>
-      <h2>create new</h2>
-      <form onSubmit={handleNewBlog}>
+      <h3>create new</h3>
+      <Form onSubmit={handleNewBlog}>
         <div>
           author
-          <input
+          <Input
             id='author'
             value={author}
             onChange={({ target }) => setAuthor(target.value)}
@@ -31,7 +34,7 @@ const NewBlog = (props) => {
         </div>
         <div>
           title
-          <input
+          <Input
             id='title'
             value={title}
             onChange={({ target }) => setTitle(target.value)}
@@ -39,14 +42,14 @@ const NewBlog = (props) => {
         </div>
         <div>
           url
-          <input
+          <Input
             id='url'
             value={url}
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button id="create">create</button>
-      </form>
+        <Button id="create">create</Button>
+      </Form>
     </div>
   )
 }

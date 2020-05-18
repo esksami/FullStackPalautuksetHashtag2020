@@ -1,6 +1,9 @@
 import React, { useState } from 'react'
 import { useDispatch } from 'react-redux'
 
+import { Form, Input, Wrapper, Title, ThirdHeader, Button } from '../styles'
+
+
 import {
   createComment
 } from '../reducers/commentReducer'
@@ -19,17 +22,16 @@ const NewComment = ({ blog }) => {
 
   return (
     <div>
-      <h3>create new</h3>
-      <form onSubmit={handleNewComment}>
+      <Form onSubmit={handleNewComment}>
         <div>
-          <input
+          <Input
             id='content'
             value={content}
             onChange={({ target }) => setContent(target.value)}
           />
-          <button id="create">add comment</button>
+          <Button id="create">add comment</Button>
         </div>
-      </form>
+      </Form>
     </div>
   )
 }
