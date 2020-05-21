@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.0.0-beta.49",
+    "apollo-link-context": "^1.0.20",
     "graphql": "^15.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
