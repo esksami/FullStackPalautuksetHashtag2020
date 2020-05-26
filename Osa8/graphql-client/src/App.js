@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import { useQuery, useApolloClient } from '@apollo/client'
+import { useQuery, useSubscription, useApolloClient } from '@apollo/client'
 
-import { ALL_PERSONS } from './queries'
+import { ALL_PERSONS, PERSON_ADDED } from './queries'
 
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
@@ -28,6 +28,19 @@ const App = () => {
   const result = useQuery(ALL_PERSONS)
   const client = useApolloClient()
 
+  const updateCacheWith = (addedPerson) => {
+    const includedIn = (set, object) => 
+      set.map(p => p.id).includes(object.id)  
+
+    const dataInStore = client.readQuery({ query: ALL_PERSONS })
+    if (!includedIn(dataInStore.allPersons, addedPerson)) {
+      client.writeQuery({
+        query: ALL_PERSONS,
+        data: { allPersons : dataInStore.allPersons.concat(addedPerson) }
+      })
+    }
+  }
+
   const logout = () => {
     setToken(null)
     localStorage.clear()
@@ -40,6 +53,15 @@ const App = () => {
       setErrorMessage(null)
     }, 10000)
   }
+
+
+  useSubscription(PERSON_ADDED, {
+    onSubscriptionData: ({ subscriptionData }) => {
+      const addedPerson = subscriptionData.data.personAdded
+      notify(`${addedPerson.name} added`)
+      updateCacheWith(addedPerson)
+    }
+  })
 
   if (!token) {
     return (

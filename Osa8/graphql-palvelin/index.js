@@ -1,4 +1,6 @@
-const { ApolloServer, UserInputError, AuthenticationError, gql } = require('apollo-server')
+const { ApolloServer, UserInputError, AuthenticationError, PubSub, gql } = require('apollo-server')
+const pubsub = new PubSub()
+
 const uuid = require('uuid/v1')
 const mongoose = require('mongoose')
 const Person = require('./models/person')
@@ -103,6 +105,10 @@ const typeDefs = gql`
       name: String!
     ): User
   }
+
+  type Subscription {
+    personAdded: Person!
+  }
 `
 
 const resolvers = {
@@ -147,6 +153,8 @@ const resolvers = {
           invalidArgs: args,
         })
       }
+
+      pubsub.publish('PERSON_ADDED', { personAdded: person })
 
       return person
     },
@@ -205,6 +213,11 @@ const resolvers = {
 
       return currentUser
     }
+  },
+  Subscription: {
+    personAdded: {
+      subscribe: () => pubsub.asyncIterator(['PERSON_ADDED'])
+    }
   }
 }
 
@@ -217,13 +230,16 @@ const server = new ApolloServer({
       const decodedToken = jwt.verify(
         auth.substring(7), JWT_SECRET
       )
+
       const currentUser = await User
         .findById(decodedToken.id).populate('friends')
+
       return { currentUser }
     }
   }
 })
 
-server.listen().then(({ url }) => {
+server.listen().then(({ url, subscriptionsUrl }) => {
   console.log(`Server ready at ${url}`)
+  console.log(`Subscriptions ready at ${subscriptionsUrl}`)
 })

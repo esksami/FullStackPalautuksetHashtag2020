@@ -4,11 +4,13 @@
   "private": true,
   "dependencies": {
     "@apollo/client": "^3.0.0-beta.49",
+    "@apollo/link-ws": "^2.0.0-beta.3",
     "apollo-link-context": "^1.0.20",
     "graphql": "^15.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "0.9.5"
+    "react-scripts": "0.9.5",
+    "subscriptions-transport-ws": "^0.9.16"
   },
   "devDependencies": {},
   "scripts": {
