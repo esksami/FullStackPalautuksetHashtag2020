@@ -8,7 +8,7 @@ const parseArguments = (args: Array<string>): Args => {
   if (args.length < 4) throw new Error('Not enough arguments provided.');
   if (args.length > 4) throw new Error('Too many arguments.');
 
-  const arguments: Array<number> = args.slice(2).map(value => {
+  const userArgs: Array<number> = args.slice(2).map(value => {
     if (isNaN(Number(value))) {
       throw new Error('At least one of the provided values was not a number.')
     }
@@ -17,12 +17,12 @@ const parseArguments = (args: Array<string>): Args => {
   })
 
   return {
-    height: arguments[0],
-    weight: arguments[1]
+    height: userArgs[0],
+    weight: userArgs[1]
   }
 }
 
-const calculateBmi = (height: number, weight: number): string => {
+export const calculateBmi = (height: number, weight: number): string => {
   const bmi: number = weight / (height / 100)**2;
 
   if (bmi < 15) {
