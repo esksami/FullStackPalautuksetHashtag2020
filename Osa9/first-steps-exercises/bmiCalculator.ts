@@ -10,17 +10,17 @@ const parseArguments = (args: Array<string>): Args => {
 
   const userArgs: Array<number> = args.slice(2).map(value => {
     if (isNaN(Number(value))) {
-      throw new Error('At least one of the provided values was not a number.')
+      throw new Error('At least one of the provided values was not a number.');
     }
 
-    return Number(value)
-  })
+    return Number(value);
+  });
 
   return {
     height: userArgs[0],
     weight: userArgs[1]
-  }
-}
+  };
+};
 
 export const calculateBmi = (height: number, weight: number): string => {
   const bmi: number = weight / (height / 100)**2;
@@ -40,13 +40,13 @@ export const calculateBmi = (height: number, weight: number): string => {
   } else if (bmi < 40) {
     return "Obese Class II (Severely obese)";
   } else {
-    return "Obese Class III (Very severely obese)"
+    return "Obese Class III (Very severely obese)";
   }
-}
+};
 
 try {
   const { height, weight} = parseArguments(process.argv);
   console.log(calculateBmi(height, weight));
 } catch (e) {
-  console.log('Error: ', e.message);
+  console.log('Error: ', (e as Error).message);
 }

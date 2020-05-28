@@ -17,10 +17,10 @@ const parseArguments = (args: Array<string>): Args => {
   if (args.length <= 3) throw new Error('Too few arguments');
 
   if (isNaN(Number(args[2]))) {
-    throw new Error('target was not a number.')
+    throw new Error('target was not a number.');
   }
 
-  const target: number = Number(args[2])
+  const target = Number(args[2]);
 
   const hours: Array<number> = args.slice(3).map(value => {
     if (isNaN(Number(value))) {
@@ -29,13 +29,13 @@ const parseArguments = (args: Array<string>): Args => {
     }
 
     return Number(value);
-  })
+  });
 
   return {
     target,
     hours
-  }
-}
+  };
+};
 
 const calculateExercises = (target: number, exerciseHours: Array<number>): Result => {
   const periodLength: number = exerciseHours.length;
@@ -73,12 +73,12 @@ const calculateExercises = (target: number, exerciseHours: Array<number>): Resul
     ratingDescription,
     target,
     average
-  }
-}
+  };
+};
 
 try {
   const { target, hours } = parseArguments(process.argv);
   console.log(calculateExercises(target, hours));
 } catch (e) {
-  console.log('Error: ', e.message);
+  console.log('Error: ', (e as Error).message);
 }
