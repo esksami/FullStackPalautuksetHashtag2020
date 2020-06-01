@@ -13,6 +13,10 @@ const getAll = (): Array<NonSensitivePatient> => {
   });
 };
 
+const getOne = (id: string): Patient | undefined => {
+  return patients.find(patient => patient.id === id);
+};
+
 const create = (newPatient: NewPatient): Patient => {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
   const id: string = uuidv4();
@@ -28,5 +32,6 @@ const create = (newPatient: NewPatient): Patient => {
 
 export default {
   getAll,
+  getOne,
   create
 };

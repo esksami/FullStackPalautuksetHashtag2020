@@ -9,6 +9,16 @@ router.get('/', (_req, res) => {
   res.send(patientService.getAll());
 });
 
+router.get('/:id', (req, res) => {
+  const patient = patientService.getOne(req.params.id);
+
+  if (patient) {
+    res.send(patient);
+  } else {
+    res.status(400).send('malformatted parameters');
+  }
+});
+
 router.post('/', (req, res) => {
   try {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
