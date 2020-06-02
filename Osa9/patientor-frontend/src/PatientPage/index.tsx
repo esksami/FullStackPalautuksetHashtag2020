@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
-import { Container, Table, Icon } from "semantic-ui-react";
+import { Container, Table, Icon, List, Divider, Segment } from "semantic-ui-react";
 
 import { Patient } from "../types";
 import { apiBaseUrl } from "../constants";
@@ -60,6 +60,30 @@ const PatientPage: React.FC = () => {
           </Table.Row>
         </Table.Body>
       </Table>
+      <br/>
+      <Divider horizontal>
+        Entries
+      </Divider>
+      <Segment>
+        <List divided relaxed>
+        {patient.entries.map((entry, i) => (
+          <List.Item key={i}>
+            <List.Content>
+              <List.Header>{entry.date}</List.Header>
+              {entry.description}
+              </List.Content>
+            {entry.diagnosisCodes &&
+              <List as='ol'>
+              {entry.diagnosisCodes.map((code, i) => (
+                <List.Item key={i} as='li' value=''>
+                  <i>{code}</i>
+                </List.Item>
+              ))}
+              </List>}
+          </List.Item>
+        ))}
+        </List>
+      </Segment>
     </div>
   );
 };
