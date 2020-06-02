@@ -9,7 +9,7 @@ import { useStateValue, setPatient } from "../state";
 
 const PatientPage: React.FC = () => {
   const id = useParams<{ id: string }>().id;
-  const [{ patient }, dispatch] = useStateValue();
+  const [{ patient, diagnoses }, dispatch] = useStateValue();
   const genderToIconName = (gender: string) => {
     if (gender === 'male')
       return 'mars';
@@ -64,6 +64,7 @@ const PatientPage: React.FC = () => {
       <Divider horizontal>
         Entries
       </Divider>
+    {patient.entries.length !== 0 ?
       <Segment>
         <List divided relaxed>
         {patient.entries.map((entry, i) => (
@@ -76,7 +77,7 @@ const PatientPage: React.FC = () => {
               <List as='ol'>
               {entry.diagnosisCodes.map((code, i) => (
                 <List.Item key={i} as='li' value=''>
-                  <i>{code}</i>
+                  {code} {diagnoses[code] && <i>{diagnoses[code].name}</i>} 
                 </List.Item>
               ))}
               </List>}
@@ -84,6 +85,11 @@ const PatientPage: React.FC = () => {
         ))}
         </List>
       </Segment>
+      :
+      <Container textAlign="center" disabled>
+        <h3 style={{color: 'gray'}}>No entries found</h3>
+      </Container>
+    }
     </div>
   );
 };
