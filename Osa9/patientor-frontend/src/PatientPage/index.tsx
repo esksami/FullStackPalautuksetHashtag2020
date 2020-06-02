@@ -3,13 +3,118 @@ import axios from "axios";
 import { useParams } from 'react-router-dom';
 import { Container, Table, Icon, List, Divider, Segment } from "semantic-ui-react";
 
-import { Patient } from "../types";
+import { Patient, Entry, HealthCheckRating } from "../types";
 import { apiBaseUrl } from "../constants";
 import { useStateValue, setPatient } from "../state";
 
+
+const assertNever = (value: never): never => {
+  throw new Error(
+    `Unhandled discriminated union member: ${JSON.stringify(value)}`
+  );
+};
+
+const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
+  const [{ diagnoses }] = useStateValue();
+
+  const healthRatingToColor = (rating: HealthCheckRating) => {
+    switch (rating) {
+      case HealthCheckRating.CriticalRisk:
+        return "black";
+      case HealthCheckRating.HighRisk:
+        return "purple";
+      case HealthCheckRating.LowRisk:
+        return "yellow";
+      case HealthCheckRating.Healthy:
+        return "green";
+      default:
+        return "grey";
+    }
+  };
+
+  switch (entry.type) {
+    case "HealthCheck":
+      return (
+        <>
+          <List.Content>
+            <List.Header>
+              {entry.date} <Icon name="stethoscope"/>
+            </List.Header>
+            {entry.description}
+            <br/>
+            Rating: <Icon name="heart"
+                          color={healthRatingToColor(entry.healthCheckRating)}/>
+            <br/>
+          </List.Content>
+        {entry.diagnosisCodes &&
+          <List as='ol'>
+          {entry.diagnosisCodes.map((code, i) => (
+            <List.Item key={i} as='li' value=''>
+              {code} {diagnoses[code] && <i>{diagnoses[code].name}</i>} 
+            </List.Item>
+          ))}
+          </List>
+        }
+        </>
+      );
+    case "Hospital":
+      return (
+        <>
+          <List.Content>
+            <List.Header>
+              {entry.date} <Icon name="hospital outline"/>
+            </List.Header>
+            {entry.description}
+            <br/>
+            Discharged at {entry.discharge.date}. Criteria: {entry.discharge.criteria}
+          </List.Content>
+        {entry.diagnosisCodes &&
+          <List as='ol'>
+          {entry.diagnosisCodes.map((code, i) => (
+            <List.Item key={i} as='li' value=''>
+              {code} {diagnoses[code] && <i>{diagnoses[code].name}</i>} 
+            </List.Item>
+          ))}
+          </List>
+        }
+        </>
+      );
+    case "OccupationalHealthcare":
+      return (
+        <>
+          <List.Content>
+            <List.Header>
+              {entry.date} <Icon name="user md"/>
+            </List.Header>
+            {entry.description}
+            <br/>
+          {entry.sickLeave &&
+            <>
+              Sick leave from {entry.sickLeave?.startDate} to {entry.sickLeave?.endDate}
+            </>
+          }
+            <br/>
+              Employer: {entry.employerName}
+          </List.Content>
+        {entry.diagnosisCodes &&
+          <List as='ol'>
+          {entry.diagnosisCodes.map((code, i) => (
+            <List.Item key={i} as='li' value=''>
+              {code} {diagnoses[code] && <i>{diagnoses[code].name}</i>} 
+            </List.Item>
+          ))}
+          </List>
+        }
+        </>
+      );
+    default:
+      return assertNever(entry);
+  }
+};
+
 const PatientPage: React.FC = () => {
   const id = useParams<{ id: string }>().id;
-  const [{ patient, diagnoses }, dispatch] = useStateValue();
+  const [{ patient }, dispatch] = useStateValue();
   const genderToIconName = (gender: string) => {
     if (gender === 'male')
       return 'mars';
@@ -69,18 +174,7 @@ const PatientPage: React.FC = () => {
         <List divided relaxed>
         {patient.entries.map((entry, i) => (
           <List.Item key={i}>
-            <List.Content>
-              <List.Header>{entry.date}</List.Header>
-              {entry.description}
-              </List.Content>
-            {entry.diagnosisCodes &&
-              <List as='ol'>
-              {entry.diagnosisCodes.map((code, i) => (
-                <List.Item key={i} as='li' value=''>
-                  {code} {diagnoses[code] && <i>{diagnoses[code].name}</i>} 
-                </List.Item>
-              ))}
-              </List>}
+            <EntryDetails entry={entry}/>
           </List.Item>
         ))}
         </List>
