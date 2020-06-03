@@ -1,11 +1,14 @@
 import React from "react";
 import axios from "axios";
 import { useParams } from 'react-router-dom';
-import { Container, Table, Icon, List, Divider, Segment } from "semantic-ui-react";
+import { Container, Table, Icon, List, Divider, Segment, Button } from "semantic-ui-react";
 
-import { Patient, Entry, HealthCheckRating } from "../types";
 import { apiBaseUrl } from "../constants";
-import { useStateValue, setPatient } from "../state";
+import { Patient, Entry, HealthCheckRating } from "../types";
+import { useStateValue, setPatient, addEntry } from "../state";
+
+import AddEntryModal from "../AddEntryModal";
+import { HospitalEntryFormValues } from "../AddEntryModal/AddEntryForm";
 
 
 const assertNever = (value: never): never => {
@@ -115,14 +118,8 @@ const EntryDetails: React.FC<{ entry: Entry }> = ({ entry }) => {
 const PatientPage: React.FC = () => {
   const id = useParams<{ id: string }>().id;
   const [{ patient }, dispatch] = useStateValue();
-  const genderToIconName = (gender: string) => {
-    if (gender === 'male')
-      return 'mars';
-    else if (gender === 'female')
-      return 'venus';
-    else
-      return 'genderless';
-  }; 
+  const [modalOpen, setModalOpen] = React.useState<boolean>(false);
+  const [error, setError] = React.useState<string | undefined>();
 
   React.useEffect(() => {
     if (patient && patient.id === id) return;
@@ -143,6 +140,37 @@ const PatientPage: React.FC = () => {
   if (!patient || patient.id !== id) {
     return null;
   }
+
+  const genderToIconName = (gender: string) => {
+    if (gender === 'male')
+      return 'mars';
+    else if (gender === 'female')
+      return 'venus';
+    else
+      return 'genderless';
+  };
+
+  const openModal = (): void => setModalOpen(true);
+
+  const closeModal = (): void => {
+    setModalOpen(false);
+    setError(undefined);
+  };
+
+  // import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
+  const submitNewEntry = async (values: HospitalEntryFormValues) => {
+    try {
+      const { data: newEntry } = await axios.post<Entry>(
+        `${apiBaseUrl}/patients/${id}/entries`,
+        values
+      );
+      dispatch(addEntry(id, newEntry)); 
+      closeModal();
+    } catch (e) {
+      console.error(e.response.data);
+      setError(e.response.data.error);
+    }
+  };
 
   return (
     <div>
@@ -184,6 +212,15 @@ const PatientPage: React.FC = () => {
         <h3 style={{color: 'gray'}}>No entries found</h3>
       </Container>
     }
+      <AddEntryModal
+        modalOpen={modalOpen}
+        onSubmit={submitNewEntry}
+        error={error}
+        onClose={closeModal}
+      />
+      <Button onClick={() => openModal()}>
+        Add New Entry
+      </Button>
     </div>
   );
 };
