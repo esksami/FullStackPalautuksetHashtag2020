@@ -175,7 +175,7 @@ export const toNewEntry = (object: any): NewEntry => {
       return {
         type: "OccupationalHealthcare",
         employerName: parseEmployerName(object.employerName),
-        ...(object.sickLeave && {
+        ...(object.sickLeave && object.sickLeave.startDate && object.sickLeave.endDate && {
           sickLeave: parseSickLeave(object.sickLeave)
         }),
         ...baseEntry

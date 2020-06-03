@@ -65,7 +65,6 @@ export const reducer = (state: State, action: Action): State => {
       };
     case "ADD_ENTRY":
       const patient = state.patients[action.payload.patientId];
-      console.log('adding entry, patient: ', patient);
 
       if (!patient)
         return state;

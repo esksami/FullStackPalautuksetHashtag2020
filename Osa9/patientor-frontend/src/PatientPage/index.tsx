@@ -4,11 +4,10 @@ import { useParams } from 'react-router-dom';
 import { Container, Table, Icon, List, Divider, Segment, Button } from "semantic-ui-react";
 
 import { apiBaseUrl } from "../constants";
-import { Patient, Entry, HealthCheckRating } from "../types";
+import { Patient, Entry, HealthCheckRating, EntryFormValues } from "../types";
 import { useStateValue, setPatient, addEntry } from "../state";
 
 import AddEntryModal from "../AddEntryModal";
-import { HospitalEntryFormValues } from "../AddEntryModal/AddEntryForm";
 
 
 const assertNever = (value: never): never => {
@@ -158,7 +157,7 @@ const PatientPage: React.FC = () => {
   };
 
   // import { PatientFormValues } from "../AddPatientModal/AddPatientForm";
-  const submitNewEntry = async (values: HospitalEntryFormValues) => {
+  const submitNewEntry = async (values: EntryFormValues) => {
     try {
       const { data: newEntry } = await axios.post<Entry>(
         `${apiBaseUrl}/patients/${id}/entries`,
