@@ -6,6 +6,9 @@ import { TextField, /*, SelectField*/ DiagnosisSelection} from "./FormField";
 import { HospitalEntry } from "../types";
 import { useStateValue } from "../state";
 
+const isDate = (date: string): boolean => {
+  return Boolean(Date.parse(date));
+};
 
 interface Props {
   onSubmit: (values: HospitalEntryFormValues) => void;
@@ -32,6 +35,7 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
       onSubmit={onSubmit}
       validate={values => {
         const requiredError = "Field is required";
+        const invalidDateError = "Invalid date format";
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const errors: any = {};
 
@@ -43,6 +47,8 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         }
         if (!values.date) {
           errors.date = requiredError;
+        } else if (!isDate(values.date)) {
+          errors.date = invalidDateError;
         }
         if (!values.specialist) {
           errors.specialist = requiredError;
@@ -52,6 +58,8 @@ export const AddEntryForm: React.FC<Props> = ({ onSubmit, onCancel }) => {
         }
         if (!values.discharge.date) {
           errors.discharge.date = requiredError;
+        } else if (!isDate(values.discharge.date)) {
+          errors.discharge.date = invalidDateError;
         }
         if (!values.discharge.criteria) {
           errors.discharge.criteria = requiredError;
